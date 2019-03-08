@@ -4,12 +4,12 @@ This repo contains automated tests that crawl through web-page(s) of a website a
 
 #### Things that would be captured and validated through the tests
 
-a. Page load time
-b. Copyright year
-c. Page title
-d. Broken or invalid links of webpage
-e. Broken or invalid images of webpage
-f. JavaScript error logs from console of webpage
+a. Page load time<br>
+b. Copyright year<br>
+c. Page title<br>
+d. Broken or invalid links of webpage<br>
+e. Broken or invalid images of webpage<br>
+f. JavaScript error logs from console of webpage<br>
 
 #### Installation Instructions
 
