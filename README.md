@@ -10,7 +10,7 @@ c. Page title<br>
 d. Broken or invalid links of webpage<br>
 e. Broken or invalid images of webpage<br>
 f. JavaScript error logs from console of webpage<br>
-g. Page Screenshot<br> *New*
+g. Page Screenshot(new) <br>
 
 #### Installation Instructions
 
