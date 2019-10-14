@@ -3,6 +3,8 @@
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
@@ -17,6 +19,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.io.File;
+import org.apache.commons.io.FileUtils;
+import java.io.IOException;
+
 
 public class WebAutomation {
 
@@ -34,7 +40,9 @@ public class WebAutomation {
         LoggingPreferences loggingprefs = new LoggingPreferences();
         loggingprefs.enable(LogType.BROWSER, Level.ALL);
         capabilities.setCapability(CapabilityType.LOGGING_PREFS, loggingprefs);
+        capabilities.setCapability (CapabilityType.ACCEPT_SSL_CERTS, true);     //handles SSL certificate issue (if any)
         driver = new ChromeDriver(capabilities);        //Note: Add chrome-driver executable file in /usr/local/bin
+        driver.manage().window().maximize();            //maximizing window size to max resolution possible as per machine
     }
 
     @org.testng.annotations.Test(priority=1)                //Priority defines the importance of the test case and it's level of execution
@@ -52,12 +60,15 @@ public class WebAutomation {
         String url = "";
         HttpURLConnection huc = null;
         int respCode = 0;
+        int broken=0;		
+        int numoflinks=0;
 
         List<WebElement> links = driver.findElements(By.tagName("a"));
         Iterator<WebElement> it = links.iterator();
         System.out.println("\n****** Finding all valid and broken links ******\n");
 
         while (it.hasNext()) {
+            numoflinks++;	
             url = it.next().getAttribute("href");
             if (url == null || url.isEmpty()) {
                 System.out.println(url + " URL is either not configured for anchor tag or it is empty.");
@@ -78,6 +89,7 @@ public class WebAutomation {
                 respCode = huc.getResponseCode();
                 if (respCode >= 400) {
                     System.out.println(url + " is returning an error page with the following response status: " + respCode);
+                    broken++;	
                 } else {
                     System.out.println(url + " is a valid link");
                 }
@@ -85,6 +97,8 @@ public class WebAutomation {
                 e.printStackTrace();
             }
         }
+        System.out.println("\nNumber of broken links: " + broken);		
+        System.out.println("Total number of links: " + numoflinks);
     }
 
     @org.testng.annotations.Test(priority=6)
@@ -165,9 +179,22 @@ public class WebAutomation {
             System.out.println("\nError! Copyright year needs to be updated to: " + year);
     }
 
+    @org.testng.annotations.Test(priority=7)		
+        public static void takeScreenshot() {      //Take screenshot of page		
+            File src= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);		
+            System.out.println("****** Screenshot Process: ******");		
+            try {		
+                FileUtils.copyFile(src, new File("screenshot"+"_"+brand.toString()));		
+                System.out.println("Screenshot saved successfully!");		
+            } catch (IOException e) {		
+                // TODO Auto-generated catch block		
+                e.printStackTrace();		
+                System.out.println("Taking Screenshot failed!");		
+            }
+        }
+
     @org.testng.annotations.AfterTest
     public static void garbageCollection() {        //Cleanup of memory utilised
         driver.quit();                              //Closes the browser instance
-
     }
 }
